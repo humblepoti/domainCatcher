@@ -78,14 +78,18 @@ if __name__ == '__main__':
    if file.is_file():
     fileHash = load_Db()
     dbLasList = []
-    for value in fileHash:
-     for hash in dict_:
-      if not dict_[hash] == fileHash[value]:
+    for key in fileHash.keys():
+     if key in dict_.keys():
+      if not dict_[key] == fileHash[key]:
        dbLasList.append([hash, dict_[hash]])
-      dbSet = set(tuple(ite) for ite in dbLasList)
    else:
      dbSet = urlU
-
-   if dbSet:
      smtpSender(dbSet)
      save_Db(dbSet)
+
+   if dbLasList:
+     dbSet = set(tuple(ite) for ite in dbLasList)
+     smtpSender(dbSet)
+     save_Db(dbSet)
+   else:
+     storeDbase('Hashes remain the same.')
