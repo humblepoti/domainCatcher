@@ -48,17 +48,7 @@ def smtpSender(sites):
   except smtplib.SMTPException:
       print ("Error: unable to send email")
 
-
-def storeDbase(dbErro):
-  dbfile = open(dbfilename, 'a')
-  for timek, value in dbErro.items():
-     print(timek,'-->',value, file=dbfile)
-     print('/n', file=dbfile)
-  dbfile.close()
-
-
-def save_Db(obj):
-  db = shelve.open('fileHash.shelve')
+def save_Db(obj, db):
   for (n, value) in obj:
    db[n] = value
   db.close()
@@ -67,27 +57,33 @@ def load_Db():
   db = shelve.open('fileHash.shelve')
   return db
 
+def verify_Db():
+   file = Path('./fileHash.shelve')
+   if file.is_file():
+     return 1
+   else:
+     return 0
 
 if __name__ == '__main__':
 
    urlL = veriPyDomain(urlList)
    urlU = [[url[0],url[2]] for url in urlL]
    dict_ = dict((key, value) for (key, value) in urlU)
-   file = Path('./fileHash.shelve')
 
-   if file.is_file():
+   checkDb = verify_Db()
+   if checkDb == 1:
     fileHash = load_Db()
     dbLasList = []
-    for key in fileHash.keys():
-     if key in dict_.keys():
+    for key in dict_.keys():
+     if key in fileHash.keys():
       if not dict_[key] == fileHash[key]:
-       dbLasList.append([hash, dict_[hash]])
+       dbLasList.append([key, dict_[key]])
    else:
      dbSet = urlU
      smtpSender(dbSet)
-     save_Db(dbSet)
+     save_Db(dbSet, load_Db())
 
    if dbLasList:
-     dbSet = set(tuple(ite) for ite in dbLasList)
+     dbSet = set([tuple(x) for x in dbLasList])
      smtpSender(dbSet)
-     save_Db(dbSet)
+     save_Db(dbSet, fileHash)
