@@ -91,5 +91,3 @@ if __name__ == '__main__':
      dbSet = set(tuple(ite) for ite in dbLasList)
      smtpSender(dbSet)
      save_Db(dbSet)
-   else:
-     storeDbase('Hashes remain the same.')
