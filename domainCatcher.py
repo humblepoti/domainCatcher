@@ -78,6 +78,8 @@ if __name__ == '__main__':
      if key in fileHash.keys():
       if not dict_[key] == fileHash[key]:
        dbLasList.append([key, dict_[key]])
+      else:
+       dbLasList.append([key, dict_[key]]) 
    else:
      dbSet = urlU
      smtpSender(dbSet)
